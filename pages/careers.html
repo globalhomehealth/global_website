@@ -233,7 +233,7 @@ textarea{resize:vertical;min-height:80px}
         <div class="frow"><div class="fg"><label>Street Address <span class="req">*</span></label><input type="text" id="street" required/></div><div class="fg"><label>Apt / Suite</label><input type="text" id="apt"/></div></div>
         <div class="frow3"><div class="fg"><label>City <span class="req">*</span></label><input type="text" id="city" required/></div><div class="fg"><label>State <span class="req">*</span></label><input type="text" id="state" required maxlength="2" placeholder="OH"/></div><div class="fg"><label>ZIP Code <span class="req">*</span></label><input type="text" id="zip" required maxlength="10"/></div></div>
         <div class="frow"><div class="fg"><label>Email <span class="req">*</span></label><input type="email" id="email" required/></div><div class="fg"><label>Phone <span class="req">*</span></label><input type="text" id="phone" required placeholder="(614) 000-0000" maxlength="14"/></div></div>
-        <div class="frow"><div class="fg"><label>Social Security Number</label><input type="text" id="ssn" placeholder="XXX-XX-XXXX" maxlength="11"/></div><div class="fg"><label>Date of Birth</label><div class="date-pair"><select id="dobYear"><option value="">Year</option></select><select id="dobMonth"><option value="">Month</option></select><select id="dobDay"><option value="">Day</option></select></div></div></div>
+        <div class="frow"><div class="fg"><label>Social Security Number</label><input type="text" id="ssn" placeholder="XXX-XX-XXXX" maxlength="11"/></div><div class="fg"><label>Date of Birth <span class="req">*</span></label><div class="date-pair"><select id="dobMonth" required><option value="">Month</option></select><select id="dobDay" required><option value="">Day</option></select><select id="dobYear" required><option value="">Year</option></select></div></div></div>
         <div class="fg"><label>Emergency Contact</label><div class="frow3"><input type="text" id="ecName" placeholder="Full Name"/><input type="text" id="ecRel" placeholder="Relationship"/><input type="text" id="ecPhone" placeholder="(614) 000-0000" maxlength="14"/></div></div>
         <div class="fg"><label>How were you referred to us?</label><div class="radio-row"><label class="radio-item"><input type="radio" name="referral" value="Family/Friend"/> Family/Friend</label><label class="radio-item"><input type="radio" name="referral" value="Employee"/> Employee</label><label class="radio-item"><input type="radio" name="referral" value="Internet"/> Internet</label><label class="radio-item"><input type="radio" name="referral" value="Other"/> Other: <input type="text" id="referralOther" style="width:120px;padding:.3rem .5rem;margin-left:4px;font-size:.85rem;border:1.5px solid #dce8e5;border-radius:6px;background:var(--off)"/></label></div></div>
 
@@ -261,20 +261,20 @@ textarea{resize:vertical;min-height:80px}
         <div class="emp-block">
           <div class="emp-lbl">Employer 1 <span class="req-badge">REQUIRED</span></div>
           <div class="frow"><div class="fg"><label>Company Name <span class="req">*</span></label><input type="text" id="e1name" required/></div><div class="fg"><label>Phone</label><input type="text" id="e1phone" placeholder="(614) 000-0000" maxlength="14"/></div></div>
-          <div class="frow3"><div class="fg"><label>Street Address</label><input type="text" id="e1street"/></div><div class="fg"><label>City</label><input type="text" id="e1city"/></div><div class="fg"><label>State / ZIP</label><input type="text" id="e1zip"/></div></div>
-          <div class="frow4"><div class="fg"><label>Job Title <span class="req">*</span></label><input type="text" id="e1title" required/></div><div class="fg"><label>Wage</label><input type="text" id="e1wage" placeholder="$/hr or salary"/></div><div class="fg"><label>From <span class="req">*</span></label><div class="date-pair"><select id="e1fromY" required><option value="">Year</option></select><select id="e1fromM" required><option value="">Month</option></select></div></div><div class="fg"><label>To</label><div class="date-pair"><select id="e1toY"><option value="">Year</option></select><select id="e1toM"><option value="">Month</option></select></div></div></div>
-          <div class="fg"><label>Primary Responsibilities</label><textarea id="e1duties" rows="2"></textarea></div>
-          <div class="frow"><div class="fg"><label>Supervisor Name</label><input type="text" id="e1sup"/></div><div class="fg"><label>Supervisor Phone</label><input type="text" id="e1supphone" placeholder="(614) 000-0000" maxlength="14"/></div></div>
-          <div class="fg"><label>Reason for Leaving</label><input type="text" id="e1leave"/></div>
+          <div class="frow3"><div class="fg"><label>Street Address <span class="req">*</span></label><input type="text" id="e1street" required/></div><div class="fg"><label>City <span class="req">*</span></label><input type="text" id="e1city" required/></div><div class="fg"><label>State / ZIP <span class="req">*</span></label><input type="text" id="e1zip" required/></div></div>
+          <div class="frow4"><div class="fg"><label>Job Title <span class="req">*</span></label><input type="text" id="e1title" required/></div><div class="fg"><label>Wage <span class="req">*</span></label><input type="text" id="e1wage" required placeholder="$/hr or salary"/></div><div class="fg"><label>From <span class="req">*</span></label><div class="date-pair"><select id="e1fromY" required><option value="">Year</option></select><select id="e1fromM" required><option value="">Month</option></select></div></div><div class="fg"><label>To</label><div class="date-pair"><select id="e1toY"><option value="">Year</option></select><select id="e1toM"><option value="">Month</option></select></div></div></div>
+          <div class="fg"><label>Primary Responsibilities <span class="req">*</span></label><textarea id="e1duties" rows="2" required></textarea></div>
+          <div class="frow"><div class="fg"><label>Supervisor Name <span class="req">*</span></label><input type="text" id="e1sup" required/></div><div class="fg"><label>Supervisor Phone <span class="req">*</span></label><input type="text" id="e1supphone" required placeholder="(614) 000-0000" maxlength="14"/></div></div>
+          <div class="fg"><label>Reason for Leaving <span class="req">*</span></label><input type="text" id="e1leave" required/></div>
         </div>
         <div class="emp-block">
           <div class="emp-lbl">Employer 2 <span class="req-badge">REQUIRED</span></div>
           <div class="frow"><div class="fg"><label>Company Name <span class="req">*</span></label><input type="text" id="e2name" required/></div><div class="fg"><label>Phone</label><input type="text" id="e2phone" placeholder="(614) 000-0000" maxlength="14"/></div></div>
-          <div class="frow3"><div class="fg"><label>Street Address</label><input type="text" id="e2street"/></div><div class="fg"><label>City</label><input type="text" id="e2city"/></div><div class="fg"><label>State / ZIP</label><input type="text" id="e2zip"/></div></div>
-          <div class="frow4"><div class="fg"><label>Job Title <span class="req">*</span></label><input type="text" id="e2title" required/></div><div class="fg"><label>Wage</label><input type="text" id="e2wage" placeholder="$/hr or salary"/></div><div class="fg"><label>From <span class="req">*</span></label><div class="date-pair"><select id="e2fromY" required><option value="">Year</option></select><select id="e2fromM" required><option value="">Month</option></select></div></div><div class="fg"><label>To</label><div class="date-pair"><select id="e2toY"><option value="">Year</option></select><select id="e2toM"><option value="">Month</option></select></div></div></div>
-          <div class="fg"><label>Primary Responsibilities</label><textarea id="e2duties" rows="2"></textarea></div>
-          <div class="frow"><div class="fg"><label>Supervisor Name</label><input type="text" id="e2sup"/></div><div class="fg"><label>Supervisor Phone</label><input type="text" id="e2supphone" placeholder="(614) 000-0000" maxlength="14"/></div></div>
-          <div class="fg"><label>Reason for Leaving</label><input type="text" id="e2leave"/></div>
+          <div class="frow3"><div class="fg"><label>Street Address <span class="req">*</span></label><input type="text" id="e2street" required/></div><div class="fg"><label>City <span class="req">*</span></label><input type="text" id="e2city" required/></div><div class="fg"><label>State / ZIP <span class="req">*</span></label><input type="text" id="e2zip" required/></div></div>
+          <div class="frow4"><div class="fg"><label>Job Title <span class="req">*</span></label><input type="text" id="e2title" required/></div><div class="fg"><label>Wage <span class="req">*</span></label><input type="text" id="e2wage" required placeholder="$/hr or salary"/></div><div class="fg"><label>From <span class="req">*</span></label><div class="date-pair"><select id="e2fromY" required><option value="">Year</option></select><select id="e2fromM" required><option value="">Month</option></select></div></div><div class="fg"><label>To</label><div class="date-pair"><select id="e2toY"><option value="">Year</option></select><select id="e2toM"><option value="">Month</option></select></div></div></div>
+          <div class="fg"><label>Primary Responsibilities <span class="req">*</span></label><textarea id="e2duties" rows="2" required></textarea></div>
+          <div class="frow"><div class="fg"><label>Supervisor Name <span class="req">*</span></label><input type="text" id="e2sup" required/></div><div class="fg"><label>Supervisor Phone <span class="req">*</span></label><input type="text" id="e2supphone" required placeholder="(614) 000-0000" maxlength="14"/></div></div>
+          <div class="fg"><label>Reason for Leaving <span class="req">*</span></label><input type="text" id="e2leave" required/></div>
         </div>
         <div class="emp-block">
           <div class="emp-lbl">Employer 3 <span style="font-size:.7rem;color:var(--g500);font-weight:500;text-transform:none;letter-spacing:0">(Optional)</span></div>
@@ -300,14 +300,14 @@ textarea{resize:vertical;min-height:80px}
         <div class="ref-block">
           <div class="emp-lbl">Reference 1 <span class="req-badge">REQUIRED</span></div>
           <div class="frow"><div class="fg"><label>Full Name <span class="req">*</span></label><input type="text" id="r1name" required/></div><div class="fg"><label>Phone <span class="req">*</span></label><input type="text" id="r1phone" required placeholder="(614) 000-0000" maxlength="14"/></div></div>
-          <div class="frow"><div class="fg"><label>Address / City</label><input type="text" id="r1addr" placeholder="City, State"/></div><div class="fg"><label>Relationship to Applicant</label><input type="text" id="r1rel" placeholder="e.g. Former Supervisor"/></div></div>
-          <div class="frow"><div class="fg"><label>Position / How Long Known</label><input type="text" id="r1pos"/></div><div class="fg"><label>Reference Type</label><div class="radio-row" style="margin-top:.5rem"><label class="radio-item"><input type="radio" name="r1type" value="Professional"/> Professional</label><label class="radio-item"><input type="radio" name="r1type" value="Personal"/> Personal</label></div></div></div>
+          <div class="frow"><div class="fg"><label>Address / City <span class="req">*</span></label><input type="text" id="r1addr" required placeholder="City, State"/></div><div class="fg"><label>Relationship to Applicant <span class="req">*</span></label><input type="text" id="r1rel" required placeholder="e.g. Former Supervisor"/></div></div>
+          <div class="frow"><div class="fg"><label>Position / How Long Known <span class="req">*</span></label><input type="text" id="r1pos" required/></div><div class="fg"><label>Reference Type</label><div class="radio-row" style="margin-top:.5rem"><label class="radio-item"><input type="radio" name="r1type" value="Professional"/> Professional</label><label class="radio-item"><input type="radio" name="r1type" value="Personal"/> Personal</label></div></div></div>
         </div>
         <div class="ref-block">
           <div class="emp-lbl">Reference 2 <span class="req-badge">REQUIRED</span></div>
           <div class="frow"><div class="fg"><label>Full Name <span class="req">*</span></label><input type="text" id="r2name" required/></div><div class="fg"><label>Phone <span class="req">*</span></label><input type="text" id="r2phone" required placeholder="(614) 000-0000" maxlength="14"/></div></div>
-          <div class="frow"><div class="fg"><label>Address / City</label><input type="text" id="r2addr" placeholder="City, State"/></div><div class="fg"><label>Relationship to Applicant</label><input type="text" id="r2rel"/></div></div>
-          <div class="frow"><div class="fg"><label>Position / How Long Known</label><input type="text" id="r2pos"/></div><div class="fg"><label>Reference Type</label><div class="radio-row" style="margin-top:.5rem"><label class="radio-item"><input type="radio" name="r2type" value="Professional"/> Professional</label><label class="radio-item"><input type="radio" name="r2type" value="Personal"/> Personal</label></div></div></div>
+          <div class="frow"><div class="fg"><label>Address / City <span class="req">*</span></label><input type="text" id="r2addr" required placeholder="City, State"/></div><div class="fg"><label>Relationship to Applicant <span class="req">*</span></label><input type="text" id="r2rel" required/></div></div>
+          <div class="frow"><div class="fg"><label>Position / How Long Known <span class="req">*</span></label><input type="text" id="r2pos" required/></div><div class="fg"><label>Reference Type</label><div class="radio-row" style="margin-top:.5rem"><label class="radio-item"><input type="radio" name="r2type" value="Professional"/> Professional</label><label class="radio-item"><input type="radio" name="r2type" value="Personal"/> Personal</label></div></div></div>
         </div>
 
         <div class="fsec">&#128209; Policy Acknowledgments</div>
@@ -444,7 +444,7 @@ function popDay(id){
 }
 var CY = new Date().getFullYear();
 // DOB
-popYear('dobYear',1940,CY-14); popMonth('dobMonth'); popDay('dobDay');
+popMonth('dobMonth'); popDay('dobDay'); popYear('dobYear',1940,CY-14);
 // Avail
 popYear('availYear',CY,CY+2); popMonth('availMonth'); popDay('availDay');
 // Sig
@@ -472,6 +472,12 @@ function dstr(yid,mid,did){
   var mn=m?MONTHS_SHORT[parseInt(m)-1]:'';
   return [mn,d||'',y].filter(Boolean).join(' ').trim();
 }
+function dobStr(){
+  var m=g('dobMonth'),d=g('dobDay'),y=g('dobYear');
+  if(!m&&!d&&!y) return '';
+  var mn=m?MONTHS_SHORT[parseInt(m)-1]:'';
+  return [mn,d,y].filter(Boolean).join(' ').trim();
+}
 function empDate(yid,mid){
   var y=g(yid),m=g(mid);
   if(!y&&!m) return 'Present';
@@ -481,20 +487,52 @@ function empDate(yid,mid){
 // ===== VALIDATION =====
 function validate(){
   var e=[];
-  if(!g('firstName')||!g('lastName')) e.push('Full name is required.');
+  // Personal
+  if(!g('firstName')||!g('lastName')) e.push('Full name (first and last) is required.');
   if(!g('email')) e.push('Email address is required.');
   if(!g('phone')) e.push('Phone number is required.');
-  if(!g('street')||!g('city')||!g('state')) e.push('Full address is required.');
+  if(!g('street')||!g('city')||!g('state')||!g('zip')) e.push('Full address (street, city, state, ZIP) is required.');
+  if(!g('dobMonth')||!g('dobDay')||!g('dobYear')) e.push('Date of birth is required.');
+  // Job
   if(!g('position')) e.push('Please select a position.');
-  if(!g('availYear')||!g('availMonth')) e.push('Date available is required.');
+  if(!g('availYear')||!g('availMonth')) e.push('Date available for work is required.');
   if(!radv('authorized')) e.push('Please answer the work authorization question.');
-  if(!g('e1name')||!g('e1title')) e.push('Employer 1 name and job title are required.');
-  if(!g('e2name')||!g('e2title')) e.push('Employer 2 name and job title are required.');
-  if(!g('e1fromY')||!g('e1fromM')) e.push('Employer 1 start date is required.');
-  if(!g('e2fromY')||!g('e2fromM')) e.push('Employer 2 start date is required.');
-  if(!g('r1name')||!g('r1phone')) e.push('Reference 1 (name and phone) is required.');
-  if(!g('r2name')||!g('r2phone')) e.push('Reference 2 (name and phone) is required.');
-  if(!g('printName')) e.push('Please print your full legal name.');
+  // Employer 1 - all fields required
+  if(!g('e1name')) e.push('Employer 1: Company name is required.');
+  if(!g('e1street')||!g('e1city')||!g('e1zip')) e.push('Employer 1: Full address (street, city, state/ZIP) is required.');
+  if(!g('e1title')) e.push('Employer 1: Job title is required.');
+  if(!g('e1wage')) e.push('Employer 1: Wage is required.');
+  if(!g('e1fromY')||!g('e1fromM')) e.push('Employer 1: Start date (From) is required.');
+  if(!g('e1duties')) e.push('Employer 1: Primary responsibilities are required.');
+  if(!g('e1sup')) e.push('Employer 1: Supervisor name is required.');
+  if(!g('e1supphone')) e.push('Employer 1: Supervisor phone is required.');
+  if(!g('e1leave')) e.push('Employer 1: Reason for leaving is required.');
+  // Employer 2 - all fields required
+  if(!g('e2name')) e.push('Employer 2: Company name is required.');
+  if(!g('e2street')||!g('e2city')||!g('e2zip')) e.push('Employer 2: Full address (street, city, state/ZIP) is required.');
+  if(!g('e2title')) e.push('Employer 2: Job title is required.');
+  if(!g('e2wage')) e.push('Employer 2: Wage is required.');
+  if(!g('e2fromY')||!g('e2fromM')) e.push('Employer 2: Start date (From) is required.');
+  if(!g('e2duties')) e.push('Employer 2: Primary responsibilities are required.');
+  if(!g('e2sup')) e.push('Employer 2: Supervisor name is required.');
+  if(!g('e2supphone')) e.push('Employer 2: Supervisor phone is required.');
+  if(!g('e2leave')) e.push('Employer 2: Reason for leaving is required.');
+  // Reference 1 - all fields required
+  if(!g('r1name')) e.push('Reference 1: Full name is required.');
+  if(!g('r1phone')) e.push('Reference 1: Phone number is required.');
+  if(!g('r1addr')) e.push('Reference 1: Address / City is required.');
+  if(!g('r1rel')) e.push('Reference 1: Relationship to applicant is required.');
+  if(!g('r1pos')) e.push('Reference 1: Position / how long known is required.');
+  if(!radv('r1type')) e.push('Reference 1: Please select Professional or Personal.');
+  // Reference 2 - all fields required
+  if(!g('r2name')) e.push('Reference 2: Full name is required.');
+  if(!g('r2phone')) e.push('Reference 2: Phone number is required.');
+  if(!g('r2addr')) e.push('Reference 2: Address / City is required.');
+  if(!g('r2rel')) e.push('Reference 2: Relationship to applicant is required.');
+  if(!g('r2pos')) e.push('Reference 2: Position / how long known is required.');
+  if(!radv('r2type')) e.push('Reference 2: Please select Professional or Personal.');
+  // Agreements & signature
+  if(!g('printName')) e.push('Please print your full legal name in the signature section.');
   if(!g('sigName')) e.push('Electronic signature is required.');
   if(!g('sigYear')||!g('sigMonth')||!g('sigDay')) e.push('Signature date is required.');
   return e;
@@ -602,7 +640,7 @@ function buildPDF(coName){
   row('Address',g('street')+(g('apt')?' Apt '+g('apt'):''));
   trow('City',g('city'),'State / ZIP',g('state')+' '+g('zip'));
   trow('Email',g('email'),'Phone',g('phone'));
-  trow('SSN','Provided on file','Date of Birth',dstr('dobYear','dobMonth','dobDay'));
+  trow('SSN','Provided on file','Date of Birth',dobStr());
   trow('Emergency Contact',g('ecName'),'Relationship',g('ecRel'));
   row('Emergency Phone',g('ecPhone'));
   row('Referred By',radv('referral')+(g('referralOther')?' - '+g('referralOther'):''));
