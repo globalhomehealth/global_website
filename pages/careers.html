@@ -752,6 +752,7 @@ document.getElementById('appForm').addEventListener('submit',function(e){
     emailjs.init('BxlBck8qflXlPAYrh');
     emailjs.send('service_2wqcd84','template_vgyrv04',{
       to_email:'globalhomehealth23@gmail.com',
+      submission_type:'New Job Application',
       applicant_name:g('firstName')+' '+g('lastName'),
       applicant_email:g('email'),
       applicant_phone:g('phone'),

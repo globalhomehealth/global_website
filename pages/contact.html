@@ -112,8 +112,12 @@ document.getElementById('ctForm').addEventListener('submit',function(e){
   emailjs.init('BxlBck8qflXlPAYrh');
   emailjs.send('service_2wqcd84','template_vgyrv04',{
     to_email:'globalhomehealth23@gmail.com',
+    submission_type:'New Website Message',
+    applicant_name:name,
     from_name:name,
+    applicant_email:email,
     from_email:email,
+    applicant_phone:phone,
     from_phone:phone,
     subject:subject,
     message:msg,
