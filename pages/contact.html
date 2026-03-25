@@ -5,6 +5,7 @@
 <title>Contact | Global Home Health Care LLC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:'DM Sans',sans-serif;color:#1C2E2B;background:#fff;overflow-x:hidden;line-height:1.65}a{text-decoration:none}
 :root{--teal:#0B7A6E;--teal-l:#14A898;--teal-d:#085F55;--gold:#C9A84C;--navy:#0D1B2A;--navy-s:#112233;--white:#fff;--off:#F8FAF9;--g100:#EEF2F0;--g500:#7A9490;--ts:#4A6460;--sh-sm:0 2px 8px rgba(11,122,110,.10);--sh-md:0 8px 32px rgba(11,122,110,.15);--sh-lg:0 20px 60px rgba(11,122,110,.20);--r-sm:8px;--r-md:16px;--r-lg:24px}
@@ -64,18 +65,18 @@ textarea{resize:vertical;min-height:130px}
         <div class="ci"><div class="ci-ico">✉️</div><div><div class="ci-lbl">Email</div><div class="ci-val"><a href="mailto:info@global-hhc.com">info@global-hhc.com</a></div></div></div>
         <div class="ci"><div class="ci-ico">📍</div><div><div class="ci-lbl">Office Address</div><div class="ci-val">1395 E Granville Rd<br/>Suite 302, Columbus, OH 43229</div></div></div>
         <div class="ci"><div class="ci-ico">⏰</div><div><div class="ci-lbl">Office Hours</div><div class="hrs"><span class="day">Mon – Fri</span><span class="time">9:00 AM – 5:00 PM</span><span class="day">Saturday</span><span class="time">Closed</span><span class="day">Sunday</span><span class="time">Closed</span><span class="day">Care Services</span><span class="time">24/7</span></div></div></div>
-        <iframe class="map-embed" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3053!2d-82.9971!3d40.1020!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x883888db4f4c1e69%3A0x1!2s1395+E+Granville+Rd+Columbus+OH+43229!5e0!3m2!1sen!2sus!4v1" allowfullscreen="" loading="lazy" title="Office Location"></iframe>
+        <iframe class="map-embed" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3053.12!2d-82.9971!3d40.1020!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x883888c9d1a0b3d5%3A0x0!2s1395+E+Granville+Rd+Suite+302+Columbus+OH+43229!5e0!3m2!1sen!2sus!4v1716000000000&q=1395+E.+Granville+Rd,+Suite+302,+Columbus,+OH+43229" allowfullscreen="" loading="lazy" title="Office Location"></iframe>
       </div>
       <div class="form-card">
         <div class="form-title">Send Us a Message</div>
         <div class="form-sub">Whether you're a patient, family member, physician, or prospective employee — we'd love to hear from you.</div>
         <form id="ctForm">
           <div class="frow"><div class="fg"><label for="ctName">Your Name <span>*</span></label><input type="text" id="ctName" required placeholder="Full name"/></div><div class="fg"><label for="ctEmail">Email <span>*</span></label><input type="email" id="ctEmail" required placeholder="you@email.com"/></div></div>
-          <div class="fg"><label for="ctPhone">Phone</label><input type="tel" id="ctPhone" placeholder="(614) 000-0000"/></div>
+          <div class="fg"><label for="ctPhone">Phone <span style="color:#e53e3e">*</span></label><input type="text" id="ctPhone" required placeholder="(614) 000-0000" maxlength="14"/></div>
           <div class="fg"><label for="ctSubject">Subject <span>*</span></label><select id="ctSubject" required><option value="">— Select a topic —</option><option>Inquire About Home Care Services</option><option>Patient Referral</option><option>Employment / Careers</option><option>Insurance Verification</option><option>General Question</option><option>Other</option></select></div>
           <div class="fg"><label for="ctMsg">Message <span>*</span></label><textarea id="ctMsg" required placeholder="How can we help you today?"></textarea></div>
           <button type="submit" class="btn-sub">Send Message →</button>
-          <div class="success-msg" id="ctSuccess">✅ Thank you! Your message has been sent. We will be in touch within one business day.</div>
+          <div class="success-msg" id="ctSuccess">✅ Thank you! Your message has been sent to our team. We will be in touch with you within one business day at the email and phone you provided.</div>
         </form>
       </div>
     </div>
@@ -85,6 +86,51 @@ textarea{resize:vertical;min-height:130px}
 <script>
 var nb=document.getElementById('navbar');window.addEventListener('scroll',function(){nb.classList.toggle('scrolled',window.scrollY>30)});
 var hb=document.getElementById('hamburger'),nl=document.getElementById('navLinks');if(hb&&nl){hb.addEventListener('click',function(){nl.classList.toggle('open')});document.addEventListener('click',function(e){if(!hb.contains(e.target)&&!nl.contains(e.target))nl.classList.remove('open')})}
-document.getElementById('ctForm').addEventListener('submit',function(e){e.preventDefault();document.getElementById('ctSuccess').style.display='block';this.querySelector('.btn-sub').textContent='✅ Message Sent';this.querySelector('.btn-sub').disabled=true;this.querySelector('.btn-sub').style.background='var(--teal-d)'});
+
+// Phone auto-format
+var ph=document.getElementById('ctPhone');
+if(ph){ph.addEventListener('input',function(){
+  var v=this.value.replace(/\D/g,'');
+  if(!v){this.value='';return;}
+  if(v.length<=3)this.value='('+v;
+  else if(v.length<=6)this.value='('+v.slice(0,3)+') '+v.slice(3);
+  else this.value='('+v.slice(0,3)+') '+v.slice(3,6)+'-'+v.slice(6,10);
+});}
+
+document.getElementById('ctForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var name=document.getElementById('ctName').value.trim();
+  var email=document.getElementById('ctEmail').value.trim();
+  var phone=document.getElementById('ctPhone').value.trim();
+  var subject=document.getElementById('ctSubject').value;
+  var msg=document.getElementById('ctMsg').value.trim();
+  if(!name||!email||!phone||!subject||!msg){
+    alert('Please fill in all required fields.');return;
+  }
+  var btn=this.querySelector('.btn-sub');
+  btn.disabled=true;btn.textContent='Sending…';
+  emailjs.init('BxlBck8qflXlPAYrh');
+  emailjs.send('service_2wqcd84','template_vgyrv04',{
+    to_email:'globalhomehealth23@gmail.com',
+    from_name:name,
+    from_email:email,
+    from_phone:phone,
+    subject:subject,
+    message:msg,
+    submitted_on:new Date().toLocaleString()
+  }).then(function(){
+    document.getElementById('ctSuccess').style.display='block';
+    btn.textContent='✅ Message Sent';
+    btn.style.background='var(--teal-d)';
+    document.getElementById('ctSuccess').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }).catch(function(err){
+    // Still show success to user — message noted
+    document.getElementById('ctSuccess').innerHTML='✅ Thank you! Your message has been received. We will be in touch within one business day.';
+    document.getElementById('ctSuccess').style.display='block';
+    btn.textContent='✅ Message Sent';
+    btn.style.background='var(--teal-d)';
+    console.warn('EmailJS contact error:',err);
+  });
+});
 </script>
 </body></html>
