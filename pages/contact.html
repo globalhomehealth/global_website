@@ -88,6 +88,8 @@ var nb=document.getElementById('navbar');window.addEventListener('scroll',functi
 var hb=document.getElementById('hamburger'),nl=document.getElementById('navLinks');if(hb&&nl){hb.addEventListener('click',function(){nl.classList.toggle('open')});document.addEventListener('click',function(e){if(!hb.contains(e.target)&&!nl.contains(e.target))nl.classList.remove('open')})}
 
 // Phone auto-format
+emailjs.init('BxlBck8qflXlPAYrh');
+
 var ph=document.getElementById('ctPhone');
 if(ph){ph.addEventListener('input',function(){
   var v=this.value.replace(/\D/g,'');
@@ -109,19 +111,13 @@ document.getElementById('ctForm').addEventListener('submit',function(e){
   }
   var btn=this.querySelector('.btn-sub');
   btn.disabled=true;btn.textContent='Sending…';
-  emailjs.init('BxlBck8qflXlPAYrh');
   emailjs.send('service_2wqcd84','template_zrvvibb',{
-    to_email:'globalhomehealth23@gmail.com',
-    submission_type:'New Website Message',
-    applicant_name:name,
-    from_name:name,
-    applicant_email:email,
-    from_email:email,
-    applicant_phone:phone,
-    from_phone:phone,
-    subject:subject,
-    message:msg,
-    submitted_on:new Date().toLocaleString()
+    from_name:      name,
+    from_email:     email,
+    from_phone:     phone,
+    subject:        subject,
+    message:        msg,
+    submitted_on:   new Date().toLocaleString()
   }).then(function(){
     document.getElementById('ctSuccess').style.display='block';
     btn.textContent='✅ Message Sent';

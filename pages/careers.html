@@ -358,6 +358,7 @@ textarea{resize:vertical;min-height:80px}
 // ===== GLOBALS =====
 var SELECTED_CO = '';
 var MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+emailjs.init('BxlBck8qflXlPAYrh');
 var MONTHS_FULL  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 // ===== NAVBAR =====
@@ -749,27 +750,24 @@ document.getElementById('appForm').addEventListener('submit',function(e){
 
     var pdfB64=doc.output('datauristring').split(',')[1];
 
-    emailjs.init('BxlBck8qflXlPAYrh');
     emailjs.send('service_2wqcd84','template_vgyrv04',{
-      to_email:'globalhomehealth23@gmail.com',
-      submission_type:'New Job Application',
-      applicant_name:g('firstName')+' '+g('lastName'),
-      applicant_email:g('email'),
-      applicant_phone:g('phone'),
-      company_applied:SELECTED_CO,
-      position:g('position'),
-      avail_date:dstr('availYear','availMonth','availDay'),
-      work_status:radv('workStatus'),
-      emp1:g('e1name')?(g('e1name')+' — '+g('e1title')):'N/A',
-      emp2:g('e2name')?(g('e2name')+' — '+g('e2title')):'N/A',
-      ref1:g('r1name')?(g('r1name')+' — '+g('r1phone')):'N/A',
-      ref2:g('r2name')?(g('r2name')+' — '+g('r2phone')):'N/A',
-      specialty:cbs('specialty'),
-      shifts:cbs('shifts'),
-      days:cbs('days'),
-      submitted_on:new Date().toLocaleString(),
-      pdf_filename:'Application_'+fname+'.pdf',
-      pdf_content:pdfB64
+      applicant_name: g('firstName')+' '+g('lastName'),
+      applicant_email: g('email'),
+      applicant_phone: g('phone'),
+      company_applied: SELECTED_CO,
+      position:        g('position'),
+      avail_date:      dstr('availYear','availMonth','availDay'),
+      work_status:     radv('workStatus'),
+      shifts:          cbs('shifts')||'Not specified',
+      days:            cbs('days')||'Not specified',
+      specialty:       cbs('specialty')||'Not specified',
+      emp1:            g('e1name') ? g('e1name')+' — '+g('e1title')+' ('+empDate('e1fromY','e1fromM')+' to '+empDate('e1toY','e1toM')+')' : 'N/A',
+      emp2:            g('e2name') ? g('e2name')+' — '+g('e2title')+' ('+empDate('e2fromY','e2fromM')+' to '+empDate('e2toY','e2toM')+')' : 'N/A',
+      ref1:            g('r1name') ? g('r1name')+' — '+g('r1phone')+' ('+g('r1rel')+')' : 'N/A',
+      ref2:            g('r2name') ? g('r2name')+' — '+g('r2phone')+' ('+g('r2rel')+')' : 'N/A',
+      submitted_on:    new Date().toLocaleString(),
+      pdf_filename:    'Application_'+fname+'.pdf',
+      pdf_content:     pdfB64
     }).then(function(){
       document.getElementById('statusBar').style.display='none';
       document.getElementById('successMsg').style.display='block';
