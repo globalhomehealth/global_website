@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -234,34 +235,113 @@ document.querySelectorAll('.rt-card').forEach(function(c){
   });
 });
 
+emailjs.init('BxlBck8qflXlPAYrh');
+
 document.getElementById('refForm').addEventListener('submit',function(e){
   e.preventDefault();
   var g=function(id){return(document.getElementById(id)||{value:''}).value.trim()||''};
   var svcs=[].slice.call(document.querySelectorAll('input[name="svc"]:checked')).map(function(c){return c.value}).join(', ')||'Not specified';
   var jsPDF=window.jspdf.jsPDF;
   var doc=new jsPDF({unit:'pt',format:'letter'});
-  var W=doc.internal.pageSize.getWidth(),M=50,y=0;
-  function cp(n){if(y+n>720){doc.addPage();y=50}}
-  function st(t){cp(30);doc.setFillColor(240,248,246);doc.rect(M-5,y-14,W-M*2+10,22,'F');doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(8,80,70);doc.text(t,M,y);y+=18;doc.setTextColor(30,30,30)}
-  function fld(l,v){if(!v)return;cp(22);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(100,100,100);doc.text(l+':',M,y);doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(20,20,20);var lines=doc.splitTextToSize(v,W-M*2-140);doc.text(lines,M+145,y);y+=Math.max(18,lines.length*14)}
-  function tf(l1,v1,l2,v2){cp(22);var h=(W-M*2-20)/2;doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(100,100,100);doc.text(l1+':',M,y);doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(20,20,20);doc.text(String(v1||'').substring(0,35),M+100,y);if(l2){doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(100,100,100);doc.text(l2+':',M+h+10,y);doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(20,20,20);doc.text(String(v2||'').substring(0,35),M+h+110,y)}y+=20}
-  doc.setFillColor(11,122,110);doc.rect(0,0,W,90,'F');
-  doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(255,255,255);doc.text('Global Home Health Care LLC',M,38);
-  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('1395 E Granville Rd, Suite 302 | Columbus, OH 43229 | (614) 495-8934',M,55);
-  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('PATIENT REFERRAL FORM',M,76);
-  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.text('Date: '+new Date().toLocaleDateString(),W-M-90,76);
-  y=110;
-  fld('Referral Type',g('refType'));
-  st('1. REFERRING PARTY');tf('Name',g('refName'),'Organization',g('refOrg'));tf('Phone',g('refPhone'),'Email',g('refEmail'));fld('Fax',g('refFax'));
-  st('2. PATIENT INFORMATION');tf('First Name',g('ptFirst'),'Last Name',g('ptLast'));tf('Date of Birth',g('ptDOB'),'Phone',g('ptPhone'));fld('Address',g('ptAddress'));tf('Insurance',g('ptIns'),'Member ID',g('ptInsId'));
-  st('3. CARE NEEDS');fld('Diagnosis',g('diagnosis'));fld('Services Requested',svcs);tf('Urgency',g('urgency'),'Start Date',g('careStart'));fld('Clinical Notes',g('clinNotes'));
-  st('4. EMERGENCY CONTACT');tf('Name',g('ecName'),'Phone',g('ecPhone'));fld('Relationship',g('ecRel'));
-  cp(40);y+=10;doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(120,120,120);
-  doc.text('Submitted in compliance with HIPAA. All patient information is kept strictly confidential.',M,y);
+  var W=doc.internal.pageSize.getWidth();
+  var PH=doc.internal.pageSize.getHeight();
+  var ML=50,MR=50,CW=W-ML-MR,y=0;
+  var TEAL=[11,122,110],NAVY=[13,27,42],GOLD=[201,168,76];
+
+  function drawRefHeader(){
+    doc.setFillColor(TEAL[0],TEAL[1],TEAL[2]);
+    doc.rect(0,0,W,56,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(255,255,255);
+    doc.text('Global Home Health Care, LLC',W/2,20,{align:'center'});
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(210,248,240);
+    doc.text('1395 E Granville Rd, Suite 302  |  Columbus, OH 43229',W/2,33,{align:'center'});
+    doc.text('Phone: (614) 495-8934  |  Fax: (614) 495-8952  |  info@global-hhc.com',W/2,44,{align:'center'});
+    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.rect(0,56,W,24,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(255,255,255);
+    doc.text('PATIENT REFERRAL FORM',W/2,71,{align:'center'});
+    doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]);
+    doc.rect(0,80,W,3,'F');
+    y=96;
+  }
+
+  function cp(n){if(y+(n||20)>PH-55){doc.addPage();drawRefHeader();}}
+
+  function st(title){
+    cp(32);y+=6;
+    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.rect(ML-8,y-14,CW+16,22,'F');
+    doc.setFillColor(TEAL[0],TEAL[1],TEAL[2]);
+    doc.rect(ML-8,y-14,5,22,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(255,255,255);
+    doc.text(title,ML+4,y+2);y+=16;doc.setTextColor(20,20,20);
+  }
+
+  function fld(l,v){
+    if(!v)return;cp(20);
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(60,90,85);
+    doc.text(l+':',ML,y);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(15,15,15);
+    var lines=doc.splitTextToSize(String(v),CW-110);
+    doc.text(lines,ML+102,y);
+    y+=Math.max(18,lines.length*13)+2;
+  }
+
+  function tf(l1,v1,l2,v2){
+    if((!v1)&&(!v2))return;cp(18);
+    var half=CW/2-6;
+    if(v1){doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(60,90,85);doc.text(l1+':',ML,y);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(15,15,15);doc.text(String(v1).substring(0,34),ML+92,y);}
+    if(l2&&v2){doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(60,90,85);doc.text(l2+':',ML+half+12,y);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(15,15,15);doc.text(String(v2).substring(0,34),ML+half+104,y);}
+    y+=17;
+  }
+
+  function divl(){cp(14);y+=4;doc.setDrawColor(190,220,215);doc.setLineWidth(0.4);doc.line(ML,y,W-MR,y);y+=8;}
+
+  drawRefHeader();
+
+var fn=(g('ptFirst')+'_'+g('ptLast')).replace(/\s+/g,'_')||'Patient';
+  var pdfFilename='GlobalHHC_Referral_'+fn+'.pdf';
+
+  // Add footers to all pages
   var tp=doc.internal.getNumberOfPages();
-  for(var i=1;i<=tp;i++){doc.setPage(i);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text('Global Home Health Care LLC — HIPAA Compliant Referral',M,750);doc.text('Page '+i+' of '+tp,W-M-50,750)}
-  var fn=(g('ptFirst')+'_'+g('ptLast')).replace(/\s+/g,'_')||'Patient';
-  doc.save('GlobalHHC_Referral_'+fn+'.pdf');
+  for(var pi=1;pi<=tp;pi++){
+    doc.setPage(pi);
+    doc.setDrawColor(201,168,76);doc.setLineWidth(0.8);
+    doc.line(50,doc.internal.pageSize.getHeight()-22,W-50,doc.internal.pageSize.getHeight()-22);
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(150,150,150);
+    doc.text('Global Home Health Care, LLC — Patient Referral Form — Confidential',50,doc.internal.pageSize.getHeight()-12);
+    doc.text('Page '+pi+' of '+tp,W-50,doc.internal.pageSize.getHeight()-12,{align:'right'});
+  }
+
+  // Generate base64 BEFORE save
+  var pdfB64=doc.output('datauristring').split(',')[1];
+  doc.save(pdfFilename);
+
+  // Send via EmailJS with PDF attachment
+  emailjs.send('service_2wqcd84','template_vgyrv04',{
+    applicant_name:  g('refName')||'Referral Submission',
+    applicant_email: g('refEmail')||'',
+    applicant_phone: g('refPhone')||'',
+    company_applied: 'Global Home Health Care LLC',
+    position:        'Patient Referral',
+    avail_date:      g('careStart')||'ASAP',
+    work_status:     g('urgency')||'',
+    shifts:          'Referral Type: '+(document.getElementById('referralType')?document.getElementById('referralType').value:''),
+    days:            'Patient: '+g('ptFirst')+' '+g('ptLast'),
+    specialty:       g('diagnosis')||'See PDF',
+    emp1:            'Insurance: '+g('ptIns')+(g('ptInsId')?' #'+g('ptInsId'):''),
+    emp2:            'Services: '+([].slice.call(document.querySelectorAll('input[name="svc"]:checked')).map(function(c){return c.value}).join(', ')||'See PDF'),
+    ref1:            'Emergency Contact: '+g('ecName')+(g('ecPhone')?' — '+g('ecPhone'):''),
+    ref2:            'Relationship: '+g('ecRel'),
+    submitted_on:    new Date().toLocaleString(),
+    pdf_filename:    pdfFilename,
+    pdf_content:     pdfB64
+  }).then(function(){
+    console.log('Referral PDF sent to globalhomehealth23@gmail.com');
+  }).catch(function(err){
+    console.warn('EmailJS referral error (PDF still downloaded):', err);
+  });
+
   document.getElementById('refSuccess').style.display='block';
   document.getElementById('refBtn').textContent='✅ Referral Submitted';
   document.getElementById('refBtn').disabled=true;

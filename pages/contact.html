@@ -5,6 +5,7 @@
 <title>Contact | Global Home Health Care LLC</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:'DM Sans',sans-serif;color:#1C2E2B;background:#fff;overflow-x:hidden;line-height:1.65}a{text-decoration:none}
@@ -111,21 +112,88 @@ document.getElementById('ctForm').addEventListener('submit',function(e){
   }
   var btn=this.querySelector('.btn-sub');
   btn.disabled=true;btn.textContent='Sending…';
+
+  // Generate a PDF summary of the message
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({unit:'pt',format:'letter'});
+  var W=doc.internal.pageSize.getWidth(),ML=50,MR=50,y=0;
+  var CW=W-ML-MR;
+  var TEAL=[11,122,110],NAVY=[13,27,42],GOLD=[201,168,76];
+
+  // Header
+  // Header - proper spacing
+  doc.setFillColor(TEAL[0],TEAL[1],TEAL[2]);doc.rect(0,0,W,56,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(255,255,255);
+  doc.text('GLOBAL HOME HEALTH CARE, LLC',W/2,20,{align:'center'});
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(210,248,240);
+  doc.text('1395 E Granville Rd, Suite 302  |  Columbus, OH 43229',W/2,33,{align:'center'});
+  doc.text('Phone: (614) 495-8934  |  Fax: (614) 495-8952  |  info@global-hhc.com',W/2,44,{align:'center'});
+  doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);doc.rect(0,56,W,24,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(255,255,255);
+  doc.text('WEBSITE CONTACT MESSAGE',W/2,71,{align:'center'});
+  doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]);doc.rect(0,80,W,3,'F');
+  // Start content well below header
+  y=96;
+
+  function secBar(t){
+    if(y+30>740){doc.addPage();y=50;}
+    y+=6;
+    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);doc.rect(ML-8,y-14,CW+16,22,'F');
+    doc.setFillColor(TEAL[0],TEAL[1],TEAL[2]);doc.rect(ML-8,y-14,5,22,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(255,255,255);
+    doc.text(t,ML+4,y+2);y+=16;doc.setTextColor(20,20,20);
+  }
+  function row(l,v){
+    if(!v)return;
+    if(y+20>740){doc.addPage();y=50;}
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(60,90,85);
+    doc.text(l+':',ML,y);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(15,15,15);
+    var lines=doc.splitTextToSize(String(v),CW-108);
+    doc.text(lines,ML+100,y);y+=Math.max(18,lines.length*13)+2;
+  }
+
+  secBar('SENDER INFORMATION');
+  row('Name',name);row('Email',email);row('Phone',phone);
+  y+=6;
+  secBar('MESSAGE');
+  row('Subject',subject);
+  y+=4;
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(80,100,95);
+  doc.text('Message:',ML,y);y+=12;
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(20,20,20);
+  var msgLines=doc.splitTextToSize(msg,CW);
+  msgLines.forEach(function(ln){
+    if(y>720){doc.addPage();y=50;}
+    doc.text(ln,ML,y);y+=12;
+  });
+  y+=10;
+  doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(130,130,130);
+  doc.text('Submitted: '+new Date().toLocaleString(),ML,y);
+
+  // Footer
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(160,160,160);
+  doc.text('Global Home Health Care, LLC — Website Contact Message',ML,740);
+  doc.setDrawColor(GOLD[0],GOLD[1],GOLD[2]);doc.setLineWidth(.7);doc.line(ML,745,W-MR,745);
+
+  var pdfFilename='Contact_Message_'+name.replace(/\s+/g,'_')+'.pdf';
+  var pdfB64=doc.output('datauristring').split(',')[1];
+
   emailjs.send('service_2wqcd84','template_zrvvibb',{
     from_name:      name,
     from_email:     email,
     from_phone:     phone,
     subject:        subject,
     message:        msg,
-    submitted_on:   new Date().toLocaleString()
+    submitted_on:   new Date().toLocaleString(),
+    pdf_filename:   pdfFilename,
+    pdf_content:    pdfB64
   }).then(function(){
     document.getElementById('ctSuccess').style.display='block';
     btn.textContent='✅ Message Sent';
     btn.style.background='var(--teal-d)';
     document.getElementById('ctSuccess').scrollIntoView({behavior:'smooth',block:'nearest'});
   }).catch(function(err){
-    // Still show success to user — message noted
-    document.getElementById('ctSuccess').innerHTML='✅ Thank you! Your message has been received. We will be in touch within one business day.';
     document.getElementById('ctSuccess').style.display='block';
     btn.textContent='✅ Message Sent';
     btn.style.background='var(--teal-d)';

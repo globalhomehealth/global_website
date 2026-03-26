@@ -543,189 +543,308 @@ function validate(){
 function buildPDF(coName){
   var jsPDF=window.jspdf.jsPDF;
   var doc=new jsPDF({unit:'pt',format:'letter'});
-  var W=doc.internal.pageSize.getWidth(), PH=doc.internal.pageSize.getHeight();
-  var ML=45, MR=45, CW=W-ML-MR;
+  var W=doc.internal.pageSize.getWidth();
+  var PH=doc.internal.pageSize.getHeight();
+  var ML=50, MR=50, CW=W-ML-MR;
   var y=0;
   var TEAL=[11,122,110], NAVY=[13,27,42], GOLD=[201,168,76];
 
-  function newPage(){doc.addPage();drawHeader();y=78;}
-  function ck(n){if(y+(n||18)>PH-45) newPage();}
-
+  // ---- HEADER drawn on every page ----
   function drawHeader(){
-    doc.setFillColor(TEAL[0],TEAL[1],TEAL[2]);doc.rect(0,0,W,42,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(255,255,255);
-    doc.text(coName,W/2,17,{align:'center'});
-    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(220,255,250);
-    doc.text('1395 E Granville Rd, Suite 302  |  Columbus, OH 43229  |  (614) 495-8934  |  info@global-hhc.com',W/2,29,{align:'center'});
-    doc.text('Fax: (614) 495-8952',W/2,39,{align:'center'});
-    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);doc.rect(0,42,W,20,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(255,255,255);
-    doc.text('EMPLOYMENT APPLICATION',W/2,55,{align:'center'});
-    doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]);doc.rect(0,62,W,2,'F');
-    y=78;
+    // Background bar
+    doc.setFillColor(TEAL[0],TEAL[1],TEAL[2]);
+    doc.rect(0,0,W,56,'F');
+    // Company name - large, centred
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(16);
+    doc.setTextColor(255,255,255);
+    doc.text(coName,W/2,20,{align:'center'});
+    // Address line
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(210,248,240);
+    doc.text('1395 E Granville Rd, Suite 302  |  Columbus, OH 43229',W/2,33,{align:'center'});
+    doc.text('Phone: (614) 495-8934  |  Fax: (614) 495-8952  |  info@global-hhc.com',W/2,44,{align:'center'});
+    // Navy title strip
+    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.rect(0,56,W,24,'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(11);
+    doc.setTextColor(255,255,255);
+    doc.text('EMPLOYMENT APPLICATION',W/2,71,{align:'center'});
+    // Gold rule
+    doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]);
+    doc.rect(0,80,W,3,'F');
+    // Content starts at y=95 — well clear of header
+    y=95;
   }
 
-  function secBar(t){
-    ck(24);
-    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);doc.rect(ML-8,y-14,CW+16,18,'F');
-    doc.setFillColor(TEAL[0],TEAL[1],TEAL[2]);doc.rect(ML-8,y-14,4,18,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(255,255,255);
-    doc.text(t,ML+2,y-1);y+=10;doc.setTextColor(20,20,20);
+  function newPage(){
+    doc.addPage();
+    drawHeader();
   }
 
-  function row(l,v){
-    if(!v||v==='None selected'||v==='Present') return;
-    ck(15);
-    doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(80,100,95);
-    doc.text(l+':',ML,y);
-    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(20,20,20);
-    var lines=doc.splitTextToSize(String(v),CW-120);
-    doc.text(lines,ML+112,y);y+=Math.max(13,lines.length*11);
+  // Check remaining space; add page if needed
+  function ck(needed){
+    if(y+(needed||20) > PH-55) newPage();
   }
 
+  // ---- SECTION HEADER BAR ----
+  function secBar(title){
+    ck(32);
+    y+=6; // breathing room above bar
+    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.rect(ML-8, y-14, CW+16, 22,'F');
+    doc.setFillColor(TEAL[0],TEAL[1],TEAL[2]);
+    doc.rect(ML-8, y-14, 5, 22,'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.setTextColor(255,255,255);
+    doc.text(title, ML+4, y+2);
+    y+=16; // breathing room below bar before first field
+    doc.setTextColor(20,20,20);
+  }
+
+  // ---- FULL-WIDTH FIELD ROW ----
+  function row(label, value){
+    if(!value || value==='None selected' || value==='N/A') return;
+    ck(20);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(60,90,85);
+    doc.text(label+':', ML, y);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(9);
+    doc.setTextColor(15,15,15);
+    var lines=doc.splitTextToSize(String(value), CW-108);
+    doc.text(lines, ML+100, y);
+    y+=Math.max(18, lines.length*13)+2;
+  }
+
+  // ---- TWO-COLUMN FIELD ROW ----
   function trow(l1,v1,l2,v2){
-    ck(13);var h=CW/2-4;
-    if(v1&&v1!=='None selected'){doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(80,100,95);doc.text(l1+':',ML,y);doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(20,20,20);doc.text(String(v1).substring(0,38),ML+88,y);}
-    if(l2&&v2&&v2!=='None selected'){doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(80,100,95);doc.text(l2+':',ML+h+8,y);doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(20,20,20);doc.text(String(v2).substring(0,38),ML+h+96,y);}
-    y+=13;
-  }
-
-  function divl(){ck(6);doc.setDrawColor(200,225,220);doc.setLineWidth(.35);doc.line(ML,y,W-MR,y);y+=7;}
-
-  function empSec(n,lbl){
-    var nm=g('e'+n+'name'); if(!nm) return;
+    if((!v1||v1==='None selected')&&(!v2||v2==='None selected')) return;
     ck(18);
-    doc.setFillColor(232,245,242);doc.rect(ML-8,y-12,CW+16,15,'F');
+    var half=CW/2-6;
+    if(v1 && v1!=='None selected'){
+      doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(60,90,85);
+      doc.text(l1+':', ML, y);
+      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(15,15,15);
+      doc.text(String(v1).substring(0,34), ML+92, y);
+    }
+    if(l2 && v2 && v2!=='None selected'){
+      doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(60,90,85);
+      doc.text(l2+':', ML+half+12, y);
+      doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(15,15,15);
+      doc.text(String(v2).substring(0,34), ML+half+104, y);
+    }
+    y+=17;
+  }
+
+  // ---- HORIZONTAL DIVIDER ----
+  function divLine(){
+    ck(14);
+    y+=4;
+    doc.setDrawColor(190,220,215);
+    doc.setLineWidth(0.4);
+    doc.line(ML, y, W-MR, y);
+    y+=8;
+  }
+
+  // ---- SUB HEADER (employer / reference) ----
+  function subHead(label){
+    ck(24);
+    y+=4;
+    doc.setFillColor(232,246,242);
+    doc.rect(ML-8, y-13, CW+16, 18,'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.setTextColor(TEAL[0],TEAL[1],TEAL[2]);
+    doc.text(label, ML, y);
+    y+=12;
+  }
+
+  // ---- POLICY BLOCK ----
+  function policyBlk(title, text){
+    ck(65);
+    y+=2;
     doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(TEAL[0],TEAL[1],TEAL[2]);
-    doc.text(lbl,ML,y-1);y+=9;
-    trow('Company',nm,'Phone',g('e'+n+'phone'));
-    row('Address',[g('e'+n+'street'),g('e'+n+'city'),g('e'+n+'zip')].filter(Boolean).join(', '));
-    trow('Job Title',g('e'+n+'title'),'Wage',g('e'+n+'wage'));
-    trow('From',empDate('e'+n+'fromY','e'+n+'fromM'),'To',empDate('e'+n+'toY','e'+n+'toM'));
-    row('Duties',g('e'+n+'duties'));
-    trow('Supervisor',g('e'+n+'sup'),'Sup. Phone',g('e'+n+'supphone'));
-    row('Reason for Leaving',g('e'+n+'leave'));y+=4;
+    doc.text(title, ML, y);
+    y+=11;
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(55,55,55);
+    var lines=doc.splitTextToSize(text, CW);
+    lines.forEach(function(ln){ ck(11); doc.text(ln, ML, y); y+=10; });
+    y+=5;
   }
 
-  function refSec(n,lbl){
-    var nm=g('r'+n+'name'); if(!nm) return;
-    ck(18);
-    doc.setFillColor(232,245,242);doc.rect(ML-8,y-12,CW+16,15,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(TEAL[0],TEAL[1],TEAL[2]);
-    doc.text(lbl,ML,y-1);y+=9;
-    trow('Name',nm,'Phone',g('r'+n+'phone'));
-    trow('Address',g('r'+n+'addr'),'Relationship',g('r'+n+'rel'));
-    trow('Position/Duration',g('r'+n+'pos'),'Type',radv('r'+n+'type'));y+=4;
+  // ---- PAGE FOOTER ----
+  function addFooters(coName){
+    var tp=doc.internal.getNumberOfPages();
+    for(var i=1;i<=tp;i++){
+      doc.setPage(i);
+      doc.setDrawColor(GOLD[0],GOLD[1],GOLD[2]);
+      doc.setLineWidth(0.8);
+      doc.line(ML, PH-22, W-MR, PH-22);
+      doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(150,150,150);
+      doc.text(coName+' — Confidential Employment Application', ML, PH-12);
+      doc.text('Page '+i+' of '+tp, W-MR, PH-12, {align:'right'});
+    }
   }
 
-  function policyBlk(t,txt){
-    ck(55);
-    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(TEAL[0],TEAL[1],TEAL[2]);
-    doc.text(t,ML,y);y+=10;
-    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(65,65,65);
-    var lines=doc.splitTextToSize(txt,CW);
-    lines.forEach(function(ln){ck(9);doc.text(ln,ML,y);y+=9});y+=5;
-  }
-
-  // BUILD
+  // ========== BUILD PDF ==========
   drawHeader();
 
+  // Company Applied
   secBar('COMPANY APPLIED TO');
-  row('Company',coName);
-  trow('Submitted On',new Date().toLocaleDateString(),'','');
-  y+=4;divl();
+  trow('Company', coName, 'Submitted', new Date().toLocaleDateString());
+  y+=2; divLine();
 
+  // Personal Info
   secBar('PERSONAL INFORMATION');
-  trow('First Name',g('firstName'),'Middle Name',g('midName'));
-  row('Last Name',g('lastName'));
-  row('Address',g('street')+(g('apt')?' Apt '+g('apt'):''));
-  trow('City',g('city'),'State / ZIP',g('state')+' '+g('zip'));
-  trow('Email',g('email'),'Phone',g('phone'));
-  trow('SSN','Provided on file','Date of Birth',dobStr());
-  trow('Emergency Contact',g('ecName'),'Relationship',g('ecRel'));
-  row('Emergency Phone',g('ecPhone'));
-  row('Referred By',radv('referral')+(g('referralOther')?' - '+g('referralOther'):''));
-  y+=4;divl();
+  trow('First Name', g('firstName'), 'Middle Name', g('midName'));
+  row('Last Name', g('lastName'));
+  row('Address', g('street')+(g('apt')?' Apt '+g('apt'):''));
+  trow('City', g('city'), 'State / ZIP', g('state')+' '+g('zip'));
+  trow('Email', g('email'), 'Phone', g('phone'));
+  trow('SSN', g('ssn')?'On file':'', 'Date of Birth', dobStr());
+  trow('Emergency Contact', g('ecName'), 'Relationship', g('ecRel'));
+  row('Emergency Phone', g('ecPhone'));
+  row('Referred By', radv('referral')+(g('referralOther')?' — '+g('referralOther'):''));
+  divLine();
 
+  // Job Interests
   secBar('JOB INTERESTS');
-  trow('Position',g('position'),'Available From',dstr('availYear','availMonth','availDay'));
-  row('Anticipated Wage',g('wage')?'$'+g('wage')+'/hr':'');
-  row('Specialty Areas',cbs('specialty'));
-  trow('Work Status',radv('workStatus'),'Shifts',cbs('shifts'));
-  row('Days Available',cbs('days'));
-  y+=4;divl();
+  trow('Position Applied For', g('position'), 'Available From', dstr('availYear','availMonth','availDay'));
+  row('Anticipated Wage', g('wage')?'$'+g('wage')+'/hr':'');
+  row('Work Status', radv('workStatus'));
+  row('Shifts Available', cbs('shifts'));
+  row('Days Available', cbs('days'));
+  row('Specialty Areas', cbs('specialty'));
+  divLine();
 
+  // Employment Eligibility
   secBar('EMPLOYMENT ELIGIBILITY');
-  trow('Authorized to Work in U.S.',radv('authorized'),'Can Pass Drug Test',radv('drugTest'));
-  row('Previously Employed Here',radv('prevGhhc')+(g('prevDates')?' - '+g('prevDates'):''));
-  row('Felony Conviction',radv('felony')+(g('felonyExplain')?' - '+g('felonyExplain'):''));
-  y+=4;divl();
+  trow('Authorized to Work in U.S.', radv('authorized'), 'Can Pass Drug Test', radv('drugTest'));
+  row('Previously Employed Here', radv('prevGhhc')+(g('prevDates')?' — '+g('prevDates'):''));
+  row('Felony Conviction', radv('felony')+(g('felonyExplain')?' — '+g('felonyExplain'):''));
+  divLine();
 
-  secBar('WORK HISTORY');
-  empSec(1,'EMPLOYER 1  (Most Recent)');
-  empSec(2,'EMPLOYER 2');
-  empSec(3,'EMPLOYER 3');
-  divl();
+  // Work History
+  secBar('WORK HISTORY  (Most Recent First)');
+  [1,2,3].forEach(function(n){
+    if(!g('e'+n+'name')) return;
+    subHead('EMPLOYER '+n+(n===1?' — Most Recent':''));
+    trow('Company', g('e'+n+'name'), 'Phone', g('e'+n+'phone'));
+    row('Address', [g('e'+n+'street'),g('e'+n+'city'),g('e'+n+'zip')].filter(Boolean).join(', '));
+    trow('Job Title', g('e'+n+'title'), 'Wage', g('e'+n+'wage'));
+    trow('From', empDate('e'+n+'fromY','e'+n+'fromM'), 'To', empDate('e'+n+'toY','e'+n+'toM')||'Present');
+    row('Responsibilities', g('e'+n+'duties'));
+    trow('Supervisor', g('e'+n+'sup'), 'Sup. Phone', g('e'+n+'supphone'));
+    row('Reason for Leaving', g('e'+n+'leave'));
+    y+=4;
+  });
+  divLine();
 
+  // Education
   secBar('EDUCATION');
-  trow('High School',g('hsName'),'City / State',g('hsCity'));
-  row('Year Graduated (HS)',g('hsYear'));
-  trow('College/University',g('colName'),'City / State',g('colCity'));
-  trow('Year Graduated',g('colYear'),'Degree / Major',g('colDegree'));
-  y+=4;divl();
+  trow('High School', g('hsName'), 'City / State', g('hsCity'));
+  row('Year Graduated (HS)', g('hsYear'));
+  trow('College / University', g('colName'), 'City / State', g('colCity'));
+  trow('Year Graduated', g('colYear'), 'Degree / Major', g('colDegree'));
+  divLine();
 
+  // Licenses
   secBar('LICENSES & CERTIFICATIONS');
   [1,2,3].forEach(function(i){
     if(!g('l'+i+'name')) return;
-    trow('Certification',g('l'+i+'name'),'ID Number',g('l'+i+'id'));
-    trow('Expiration',g('l'+i+'exp'),'State',g('l'+i+'state'));y+=3;
+    trow('Certification', g('l'+i+'name'), 'ID Number', g('l'+i+'id'));
+    trow('Expiration Date', g('l'+i+'exp'), 'State', g('l'+i+'state'));
+    y+=3;
   });
-  divl();
+  divLine();
 
+  // References
   secBar('PROFESSIONAL REFERENCES');
-  refSec(1,'REFERENCE 1');
-  refSec(2,'REFERENCE 2');
-  divl();
+  [1,2].forEach(function(n){
+    subHead('REFERENCE '+n);
+    trow('Name', g('r'+n+'name'), 'Phone', g('r'+n+'phone'));
+    trow('Address / City', g('r'+n+'addr'), 'Relationship', g('r'+n+'rel'));
+    trow('Position / Duration', g('r'+n+'pos'), 'Type', radv('r'+n+'type'));
+    y+=4;
+  });
+  divLine();
 
+  // Policies
   secBar('POLICY ACKNOWLEDGMENTS');
-  policyBlk('Application Acknowledgment:','I certify all answers are true and accurate. False information may result in termination. I authorize the company to verify all information and conduct a background investigation. Employment is at-will.');
-  policyBlk('Drug-Free Workplace:','I will abide by the Drug-Free Workplace program and notify the employer of any drug-related conviction within 5 days.');
-  policyBlk('Abuse Policy:','Verbal or physical abuse of any patient is grounds for immediate termination. Local authorities will be notified.');
-  policyBlk('Confidentiality & HIPAA:','I will maintain confidentiality of all patient information per HIPAA. This obligation continues after termination.');
-  policyBlk('Incident Reporting:','I must immediately notify the company of any client hospitalization, refusal of services, or incident. Falsifying timesheets is subject to legal action.');
-  row('Accident Reporting',radv('accidents')==='Yes'?'Agreed':'');
-  row('PPE Agreement',radv('ppe')==='Yes'?'Agreed':'');
-  divl();
+  policyBlk('Application Acknowledgment:',
+    'I certify all answers are true and accurate. False information may result in termination. '+
+    'I authorize the company to verify all information and conduct a background investigation. '+
+    'Employment is at-will. I am willing to submit to drug screening per applicable laws.');
+  policyBlk('Drug-Free Workplace:',
+    'I will abide by the Drug-Free Workplace program and notify the employer of any drug-related '+
+    'criminal conviction within 5 days. Remedial action up to termination may follow.');
+  policyBlk('Abuse Policy:',
+    'Verbal or physical abuse of any patient is grounds for immediate termination. '+
+    'Local authorities will be notified and criminal charges may be filed.');
+  policyBlk('Confidentiality & HIPAA:',
+    'I will maintain confidentiality of all patient information per HIPAA. '+
+    'This obligation continues after termination.');
+  policyBlk('Incident Reporting:',
+    'I must immediately notify the company of any client hospitalization, refusal of services, '+
+    'or any incident. Falsifying timesheets is subject to legal action.');
+  row('Accident Reporting', radv('accidents')==='Yes'?'Agreed — Will report all accidents immediately':'');
+  row('PPE Agreement', radv('ppe')==='Yes'?'Agreed — Will wear all required PPE at all times':'');
+  divLine();
 
+  // Signature
   secBar('CERTIFICATION & SIGNATURE');
-  ck(70);y+=4;
-  doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(70,70,70);
-  var cert='I attest that the above information is true and accurate. I give the agency permission to contact any cited employer or reference regarding my character, employment history, or work ethics.';
-  doc.splitTextToSize(cert,CW).forEach(function(ln){doc.text(ln,ML,y);y+=10});
-  y+=10;
-  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(80,100,95);
-  doc.text('Print Name:',ML,y);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(20,20,20);doc.text(g('printName'),ML+70,y);
-  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(80,100,95);doc.text('Date:',W-MR-120,y);
-  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(20,20,20);doc.text(dstr('sigYear','sigMonth','sigDay'),W-MR-90,y);
-  y+=18;
-  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(80,100,95);doc.text('Signature:',ML,y);
-  doc.setFont('helvetica','italic');doc.setFontSize(12);doc.setTextColor(TEAL[0],TEAL[1],TEAL[2]);doc.text(g('sigName'),ML+65,y);
-  doc.setDrawColor(TEAL[0],TEAL[1],TEAL[2]);doc.setLineWidth(.7);doc.line(ML+62,y+3,ML+62+doc.getTextWidth(g('sigName'))+4,y+3);
-  y+=26;ck(38);
-  doc.setFillColor(248,250,249);doc.rect(ML,y,CW,34,'F');
-  doc.setDrawColor(200,225,220);doc.setLineWidth(.4);doc.rect(ML,y,CW,34,'S');
-  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(80,100,95);doc.text('FOR OFFICE USE ONLY',ML+CW/2,y+10,{align:'center'});
-  doc.text('Employee Name: _________________________',ML+8,y+22);doc.text('Hire Date: _________________',ML+CW-130,y+22);
-  doc.text('H/R Coordinator: _______________________',ML+8,y+32);doc.text('Start Date: ________________',ML+CW-130,y+32);
+  ck(80);
+  y+=6;
+  doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(60,60,60);
+  var certText='I attest that the above information is true and accurate to the best of my knowledge. '+
+    'I give the agency permission to contact any cited employer or reference regarding my '+
+    'character, employment history, or work ethics.';
+  doc.splitTextToSize(certText,CW).forEach(function(ln){doc.text(ln,ML,y);y+=11;});
+  y+=12;
 
-  var tp=doc.internal.getNumberOfPages();
-  for(var i=1;i<=tp;i++){
-    doc.setPage(i);
-    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(160,160,160);
-    doc.text(coName+' — Employment Application — Confidential',ML,PH-14);
-    doc.text('Page '+i+' of '+tp,W-MR-35,PH-14,{align:'right'});
-    doc.setDrawColor(GOLD[0],GOLD[1],GOLD[2]);doc.setLineWidth(.7);doc.line(ML,PH-20,W-MR,PH-20);
-  }
+  // Print Name + Date
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(60,90,85);
+  doc.text('Print Name:', ML, y);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(15,15,15);
+  doc.text(g('printName'), ML+75, y);
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(60,90,85);
+  doc.text('Date:', W-MR-120, y);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(15,15,15);
+  doc.text(dstr('sigYear','sigMonth','sigDay'), W-MR-85, y);
+  y+=22;
+
+  // Signature line
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(60,90,85);
+  doc.text('Signature:', ML, y);
+  doc.setFont('helvetica','italic');doc.setFontSize(13);doc.setTextColor(TEAL[0],TEAL[1],TEAL[2]);
+  var sigText=g('sigName');
+  doc.text(sigText, ML+68, y);
+  doc.setDrawColor(TEAL[0],TEAL[1],TEAL[2]);
+  doc.setLineWidth(0.7);
+  doc.line(ML+65, y+4, ML+65+doc.getTextWidth(sigText)+8, y+4);
+  y+=28;
+
+  // HR Office Use Box
+  ck(42);
+  doc.setFillColor(248,251,250);
+  doc.rect(ML, y, CW, 38,'F');
+  doc.setDrawColor(190,220,215);doc.setLineWidth(0.5);
+  doc.rect(ML, y, CW, 38,'S');
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(60,90,85);
+  doc.text('FOR OFFICE USE ONLY', ML+CW/2, y+11, {align:'center'});
+  doc.text('Employee Name: _______________________________', ML+8, y+23);
+  doc.text('Hire Date: ____________________', W-MR-145, y+23);
+  doc.text('H/R Coordinator: _____________________________', ML+8, y+34);
+  doc.text('Start Date: ___________________', W-MR-145, y+34);
+
+  // Add footers to all pages
+  addFooters(coName);
+
   return doc;
 }
 
@@ -746,9 +865,9 @@ document.getElementById('appForm').addEventListener('submit',function(e){
   try{
     var doc=buildPDF(SELECTED_CO);
     var fname=(g('firstName')+'_'+g('lastName')).replace(/\s+/g,'_');
-    doc.save('Application_'+fname+'.pdf');
-
+    // Generate base64 BEFORE save to ensure clean output
     var pdfB64=doc.output('datauristring').split(',')[1];
+    doc.save('Application_'+fname+'.pdf');
 
     emailjs.send('service_2wqcd84','template_vgyrv04',{
       applicant_name: g('firstName')+' '+g('lastName'),
